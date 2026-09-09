@@ -1,6 +1,8 @@
-import re
+import json
 import math
+import re
 from collections import Counter
+from pathlib import Path
 from typing import List, Dict, Any
 from src.utils import clean_tweet_text, logger
 
@@ -53,14 +55,38 @@ DEFAULT_HISTORICAL_RESOLUTIONS: List[Dict[str, str]] = [
 ]
 
 class HistoricalResolutionRetriever:
-    """Self-contained Pure-Python Hybrid Retriever for Historical Resolutions."""
+    """
+    Hybrid Vector + TF-IDF Retriever for Historical Resolutions.
+    Automatically loads real processed Kaggle data (amazon_qa_english_5k.jsonl)
+    when available, or falls back to default SOP bank.
+    """
 
-    def __init__(self, initial_data: List[Dict[str, str]] = None):
-        self.data = initial_data or DEFAULT_HISTORICAL_RESOLUTIONS
+    def __init__(self, data_path: str = "data/processed/amazon_qa_english_5k.jsonl", max_kb_size: int = 2000):
+        self.data = []
+        p = Path(data_path)
+        if p.exists():
+            try:
+                with open(p, "r", encoding="utf-8") as f:
+                    for idx, line in enumerate(f):
+                        if idx >= max_kb_size:
+                            break
+                        item = json.loads(line)
+                        self.data.append({
+                            "query": item.get("query", ""),
+                            "resolution": item.get("resolution", ""),
+                            "intent": item.get("intent", "GENERAL")
+                        })
+                logger.info(f"Retriever loaded {len(self.data):,} real historical Amazon QA pairs from {p.name}")
+            except Exception as e:
+                logger.warning(f"Could not load processed dataset: {e}. Using default SOP bank.")
+                self.data = DEFAULT_HISTORICAL_RESOLUTIONS
+        else:
+            self.data = DEFAULT_HISTORICAL_RESOLUTIONS
+
         self._index_corpus()
 
     def _tokenize(self, text: str) -> List[str]:
-        return re.findall(r'\b[a-zA-Z]{2,}\b', text.lower())
+        return re.findall(r'\\b[a-zA-Z]{2,}\\b', text.lower())
 
     def _index_corpus(self):
         self.doc_vectors = []
@@ -81,7 +107,7 @@ class HistoricalResolutionRetriever:
             total = max(sum(counts.values()), 1)
             for t, c in counts.items():
                 tf = c / total
-                idf = math.log(1 + (n_docs / self.df[t]))
+                idf = math.log(1 + (n_docs / max(self.df[t], 1)))
                 vec[t] = tf * idf
             norm = math.sqrt(sum(v*v for v in vec.values()))
             self.doc_vectors.append({k: v / max(norm, 1e-6) for k, v in vec.items()})
@@ -99,7 +125,7 @@ class HistoricalResolutionRetriever:
         q_vec = {}
         for t, c in q_counts.items():
             tf = c / q_total
-            idf = math.log(1 + (n_docs / self.df.get(t, 1)))
+            idf = math.log(1 + (n_docs / max(self.df.get(t, 1), 1)))
             q_vec[t] = tf * idf
         q_norm = math.sqrt(sum(v*v for v in q_vec.values()))
         if q_norm > 0:
