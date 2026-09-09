@@ -1,0 +1,33 @@
+brand:
+  name: "AmazonHelp"
+  twitter_handle: "@AmazonHelp"
+  max_tweet_chars: 280
+
+model:
+  provider: "mock_or_llm"
+  primary_model: "gemini-1.5-flash"
+  temperature: 0.1
+  max_tokens: 250
+
+retriever:
+  top_k: 3
+  similarity_threshold: 0.60
+  hybrid_bm25_weight: 0.4
+  vector_weight: 0.6
+
+escalation:
+  confidence_threshold: 0.75
+  sentiment_threshold: -0.40
+  require_human_on_pii: true
+  require_human_on_financial_dispute: true
+  max_retry_threshold: 2
+
+evaluation:
+  golden_set_path: "data/golden_set/golden_eval_200.jsonl"
+  calibration_set_path: "data/golden_set/human_judge_calibration_50.jsonl"
+  metrics_output_dir: "reports/metrics"
+  judge_weights:
+    groundedness: 0.35
+    helpfulness: 0.25
+    tone_safety: 0.20
+    escalation_accuracy: 0.20

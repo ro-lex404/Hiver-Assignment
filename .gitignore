@@ -1,0 +1,33 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+
+# Datasets and large caches
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*.parquet
+data/processed/*.h5
+
+# API Keys & Secrets
+kaggle.json
+*.pem
+
+# Test & coverage
+.pytest_cache/
+.coverage
+
+# OS
+.DS_Store
+Thumbs.db

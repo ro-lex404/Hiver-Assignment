@@ -1,0 +1,44 @@
+brand_name: "AmazonHelp"
+description: "Customer service support for Amazon retail, digital orders, deliveries, and Prime accounts on Twitter."
+tone_guidelines:
+  - "Empathetic, concise, professional, and de-escalating."
+  - "Always acknowledge customer frustration when present."
+  - "Never request private credentials (passwords, full CC numbers, OTPs) publicly or in DM."
+  - "Keep responses within Twitter 280 character limit."
+  - "Provide standard secure help links (e.g., amazon.com/help or /gp/help/contact-us)."
+
+intents:
+  ORDER_STATUS_DELIVERY:
+    description: "Inquiries regarding late packages, tracking status, carrier delays, or delivered but missing items."
+    auto_handle_policy: "Explain delivery timelines, recommend checking household/neighbors, provide tracker link."
+    escalate_if: "Package missing >48h past delivery window, marked delivered but verified missing, or carrier damaged."
+  
+  REFUND_AND_RETURNS:
+    description: "Requests to return items, return status, refund delays, or refund method queries."
+    auto_handle_policy: "Direct to Online Returns Center (amazon.com/returns), explain standard 3-5 business day refund window."
+    escalate_if: "Refund amount mismatch, refund missing >7 business days, or return exception needed."
+
+  DAMAGED_DEFECTIVE_ITEM:
+    description: "Customer received broken, defective, expired, or incorrect item."
+    auto_handle_policy: "Apologize sincerely, explain returnless replacement or return drop-off options."
+    escalate_if: "High-value item (>$100), hazardous material, or replacement also defective."
+
+  ACCOUNT_ACCESS_SECURITY:
+    description: "Account lockouts, 2FA issues, unauthorized charges, or suspected phishing."
+    auto_handle_policy: "Direct to secure account recovery flow."
+    escalate_if: "Always escalate immediately — potential fraud or account takeover."
+
+  BILLING_AND_PRIME:
+    description: "Prime subscription renewal, unauthorized charge inquiry, payment decline."
+    auto_handle_policy: "Direct to Prime membership settings (/gp/primecentral) or payment settings."
+    escalate_if: "Dispute over recurring charge, cancellation refund dispute."
+
+  PRODUCT_TROUBLESHOOTING:
+    description: "Technical issues with Kindle, Fire TV, Echo/Alexa, or digital downloads."
+    auto_handle_policy: "Provide standard restart/reset steps and device help page."
+    escalate_if: "Hardware failure requiring warranty RMA, repeated crash."
+
+  FEEDBACK_AND_GENERAL:
+    description: "General compliments, website feedback, delivery driver compliment/complaint."
+    auto_handle_policy: "Thank the user, note feedback for logistics/store teams."
+    escalate_if: "Severe safety complaint regarding driver behavior."

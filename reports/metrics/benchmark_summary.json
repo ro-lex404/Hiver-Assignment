@@ -1,0 +1,218 @@
+{
+  "Trivial Baseline": {
+    "intent": {
+      "accuracy": 0.24,
+      "macro_precision": 0.0343,
+      "macro_recall": 0.1429,
+      "macro_f1": 0.0553,
+      "per_class": {
+        "ORDER_STATUS_DELIVERY": {
+          "precision": 0.24,
+          "recall": 1.0,
+          "f1": 0.387,
+          "support": 48
+        },
+        "REFUND_AND_RETURNS": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 37
+        },
+        "DAMAGED_DEFECTIVE_ITEM": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 30
+        },
+        "ACCOUNT_ACCESS_SECURITY": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 25
+        },
+        "BILLING_AND_PRIME": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 20
+        },
+        "PRODUCT_TROUBLESHOOTING": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 20
+        },
+        "FEEDBACK_AND_GENERAL": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 20
+        }
+      }
+    },
+    "escalation": {
+      "escalation_accuracy": 0.45,
+      "escalation_precision": 0.45,
+      "escalation_recall": 1.0,
+      "escalation_f1": 0.6207,
+      "false_negatives": 0,
+      "false_positives": 110
+    },
+    "lexical": {
+      "mean_token_jaccard": 0.1268,
+      "avg_char_length": 100.0,
+      "pct_within_280_chars": 100.0
+    },
+    "judge_means": {
+      "groundedness": 2.48,
+      "helpfulness": 3.48,
+      "tone_safety": 5.0,
+      "escalation": 3.9,
+      "overall": 3.518
+    }
+  },
+  "Simple Baseline": {
+    "intent": {
+      "accuracy": 0.67,
+      "macro_precision": 0.7691,
+      "macro_recall": 0.6509,
+      "macro_f1": 0.6315,
+      "per_class": {
+        "ORDER_STATUS_DELIVERY": {
+          "precision": 0.677,
+          "recall": 0.875,
+          "f1": 0.764,
+          "support": 48
+        },
+        "REFUND_AND_RETURNS": {
+          "precision": 0.865,
+          "recall": 0.865,
+          "f1": 0.865,
+          "support": 37
+        },
+        "DAMAGED_DEFECTIVE_ITEM": {
+          "precision": 1.0,
+          "recall": 0.167,
+          "f1": 0.286,
+          "support": 30
+        },
+        "ACCOUNT_ACCESS_SECURITY": {
+          "precision": 1.0,
+          "recall": 0.4,
+          "f1": 0.571,
+          "support": 25
+        },
+        "BILLING_AND_PRIME": {
+          "precision": 0.556,
+          "recall": 1.0,
+          "f1": 0.714,
+          "support": 20
+        },
+        "PRODUCT_TROUBLESHOOTING": {
+          "precision": 1.0,
+          "recall": 0.75,
+          "f1": 0.857,
+          "support": 20
+        },
+        "FEEDBACK_AND_GENERAL": {
+          "precision": 0.286,
+          "recall": 0.5,
+          "f1": 0.364,
+          "support": 20
+        }
+      }
+    },
+    "escalation": {
+      "escalation_accuracy": 0.685,
+      "escalation_precision": 0.7755,
+      "escalation_recall": 0.4222,
+      "escalation_f1": 0.5468,
+      "false_negatives": 52,
+      "false_positives": 11
+    },
+    "lexical": {
+      "mean_token_jaccard": 0.0937,
+      "avg_char_length": 71.6,
+      "pct_within_280_chars": 100.0
+    },
+    "judge_means": {
+      "groundedness": 4.34,
+      "helpfulness": 4.34,
+      "tone_safety": 5.0,
+      "escalation": 3.85,
+      "overall": 4.374
+    }
+  },
+  "Proposed Support Agent": {
+    "intent": {
+      "accuracy": 0.765,
+      "macro_precision": 0.8295,
+      "macro_recall": 0.7635,
+      "macro_f1": 0.7693,
+      "per_class": {
+        "ORDER_STATUS_DELIVERY": {
+          "precision": 0.677,
+          "recall": 0.875,
+          "f1": 0.764,
+          "support": 48
+        },
+        "REFUND_AND_RETURNS": {
+          "precision": 0.839,
+          "recall": 0.703,
+          "f1": 0.765,
+          "support": 37
+        },
+        "DAMAGED_DEFECTIVE_ITEM": {
+          "precision": 0.645,
+          "recall": 0.667,
+          "f1": 0.656,
+          "support": 30
+        },
+        "ACCOUNT_ACCESS_SECURITY": {
+          "precision": 1.0,
+          "recall": 0.6,
+          "f1": 0.75,
+          "support": 25
+        },
+        "BILLING_AND_PRIME": {
+          "precision": 0.645,
+          "recall": 1.0,
+          "f1": 0.784,
+          "support": 20
+        },
+        "PRODUCT_TROUBLESHOOTING": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 20
+        },
+        "FEEDBACK_AND_GENERAL": {
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.667,
+          "support": 20
+        }
+      }
+    },
+    "escalation": {
+      "escalation_accuracy": 0.715,
+      "escalation_precision": 0.8837,
+      "escalation_recall": 0.4222,
+      "escalation_f1": 0.5714,
+      "false_negatives": 52,
+      "false_positives": 5
+    },
+    "lexical": {
+      "mean_token_jaccard": 0.1599,
+      "avg_char_length": 170.4,
+      "pct_within_280_chars": 100.0
+    },
+    "judge_means": {
+      "groundedness": 4.32,
+      "helpfulness": 4.53,
+      "tone_safety": 5.0,
+      "escalation": 3.91,
+      "overall": 4.427
+    }
+  }
+}
