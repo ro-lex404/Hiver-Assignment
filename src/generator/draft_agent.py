@@ -1,15 +1,16 @@
 import os
 from typing import Dict, Any, List
 from src.intent.taxonomy import INTENT_TAXONOMY
+from src.llm_client import LLMClient
 from src.utils import clean_tweet_text, logger
 
 class GroundedDraftAgent:
     """
     Generates grounded, policy-compliant Twitter replies.
-    Adheres strictly to:
-    - Twitter 280-character limit
-    - Brand voice (Polite, empathetic, de-escalating)
-    - Grounding against historical resolutions and verified SOP links
+    Supports:
+    1. Open Models via Groq / Gemini / OpenAI APIs
+    2. Zero-key deterministic template fallback
+    3. Strict Twitter 280-char guardrail
     """
 
     BRAND_LINKS = {
@@ -22,6 +23,9 @@ class GroundedDraftAgent:
         "FEEDBACK_AND_GENERAL": "amazon.com/help"
     }
 
+    def __init__(self):
+        self.llm = LLMClient()
+
     def generate_reply(
         self,
         customer_text: str,
@@ -29,24 +33,45 @@ class GroundedDraftAgent:
         escalation_result: Dict[str, Any],
         retrieved_context: Dict[str, Any]
     ) -> str:
-        """Draft a grounded support reply."""
         should_escalate = escalation_result["should_escalate"]
         link = self.BRAND_LINKS.get(intent, "amazon.com/help")
 
+        # If LLM client has an active cloud API (Groq, OpenAI, Gemini), run grounded prompt
+        if self.llm.provider in ["groq", "openai", "gemini"]:
+            system_prompt = (
+                "You are the official Twitter customer service AI agent for @AmazonHelp. "
+                "Your job is to draft a polite, empathetic, concise tweet reply (<280 chars) to the customer. "
+                f"The customer's intent is classified as: {intent}. "
+                f"Standard resolution link: {link}.\n"
+                f"Historical resolution context:\n{retrieved_context.get('grounding_exemplars', '')}\n"
+                "Rules:\n"
+                "1. Keep response strictly UNDER 280 characters.\n"
+                "2. If escalation is required, apologize empathetically and instruct them to send a DM with order details.\n"
+                "3. If auto-handled, provide clear self-service resolution and mention the verified link.\n"
+                "4. NEVER ask for passwords, OTPs, or credit card numbers publicly."
+            )
+            user_prompt = (
+                f"Customer Tweet: {customer_text}\n"
+                f"Escalation Decision: {'ESCALATE TO HUMAN' if should_escalate else 'AUTO-HANDLE'}\n"
+                f"Reason: {escalation_result.get('stated_reason', '')}"
+            )
+            llm_reply = self.llm.generate(system_prompt, user_prompt)
+            if llm_reply and len(llm_reply.strip()) > 5:
+                clean_reply = clean_tweet_text(llm_reply)
+                return clean_reply[:277] + "..." if len(clean_reply) > 280 else clean_reply
+
+        # Deterministic Grounded Resolution (Fast / Offline Fallback)
         if should_escalate:
-            # Escalation reply: empathetic acknowledgment + secure DM handoff
             reason = escalation_result.get("stated_reason", "")
-            if "safety" in reason.lower() or "hazard" in reason.lower() or "legal" in reason.lower():
-                reply = f"We take this matter very seriously and sincerely apologize. Please send us a private DM with your order ID and details immediately so our specialized escalation team can assist you."
-            elif "security" in reason.lower() or "compromise" in reason.lower() or "2fa" in reason.lower():
-                reply = f"For your account security, please never share passwords publicly. Please send us a direct message with your account email so our fraud prevention team can secure your account right away."
-            elif "repeat" in reason.lower() or "dispute" in reason.lower() or "pii" in reason.lower():
-                reply = f"We sincerely apologize for this frustration. To look into your order details securely, please send us a direct message with your order number so an agent can resolve this for you directly."
+            if any(k in reason.lower() for k in ["safety", "hazard", "legal"]):
+                reply = "We take this matter very seriously and sincerely apologize. Please send us a private DM with your order ID immediately so our specialized escalation team can assist you."
+            elif any(k in reason.lower() for k in ["security", "compromise", "2fa"]):
+                reply = "For your account security, please never share passwords publicly. Please send us a direct message with your account email so our fraud prevention team can secure your account."
+            elif any(k in reason.lower() for k in ["repeat", "dispute", "pii"]):
+                reply = "We sincerely apologize for this frustration. To look into your order details securely, please send us a direct message with your order number so an agent can resolve this for you directly."
             else:
-                reply = f"We apologize for the inconvenience. Please send us a DM with your order details so our support team can investigate and resolve this for you!"
+                reply = "We apologize for the inconvenience. Please send us a DM with your order details so our support team can investigate and resolve this for you!"
         else:
-            # Auto-handled grounded reply using SOP and retrieved patterns
-            sop_info = INTENT_TAXONOMY.get(intent, {})
             if intent == "ORDER_STATUS_DELIVERY":
                 reply = f"We understand your concern regarding your delivery! You can track real-time progress at {link}. If not delivered within 24h of the estimated date, let us know so we can assist!"
             elif intent == "REFUND_AND_RETURNS":
@@ -62,9 +87,5 @@ class GroundedDraftAgent:
             else:
                 reply = f"Thank you for reaching out to Amazon Support. For assistance and self-service account options, please visit {link}."
 
-        # Enforce Twitter 280-char strict safety truncation
         clean_reply = clean_tweet_text(reply)
-        if len(clean_reply) > 280:
-            clean_reply = clean_reply[:277] + "..."
-
-        return clean_reply
+        return clean_reply[:277] + "..." if len(clean_reply) > 280 else clean_reply

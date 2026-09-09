@@ -1,6 +1,8 @@
 import re
+import json
 from typing import Dict, Any, List
-from src.intent.taxonomy import INTENT_TAXONOMY
+from src.llm_client import LLMClient
+from src.utils import logger
 
 class LLMJudgeRubric:
     """
@@ -12,6 +14,9 @@ class LLMJudgeRubric:
     4. Escalation Appropriateness (Hands off sensitive PII/hazards, auto-resolves standard cases)
     """
 
+    def __init__(self):
+        self.llm = LLMClient()
+
     def evaluate_reply(
         self,
         customer_text: str,
@@ -22,11 +27,51 @@ class LLMJudgeRubric:
         true_escalation: bool,
         reference_reply: str
     ) -> Dict[str, Any]:
-        reply_lower = predicted_reply.lower()
-        cust_lower = customer_text.lower()
         
+        # If active LLM API is configured, run structured JSON judge prompt
+        if self.llm.provider in ["groq", "openai", "gemini"]:
+            system_prompt = (
+                "You are an expert customer support quality auditor evaluating an AI response on Twitter. "
+                "Rate the predicted reply across 4 dimensions on a 1-5 scale:\n"
+                "1. groundedness (1-5): Adheres to official policies, verified links, zero hallucinations.\n"
+                "2. helpfulness (1-5): Directly answers customer query with clear next steps.\n"
+                "3. tone_safety (1-5): Polite, empathetic, <=280 chars, no toxic language or credential requests.\n"
+                "4. escalation_appropriateness (1-5): Correctly escalated or auto-handled.\n\n"
+                "Output ONLY valid JSON in this format: {\"groundedness\": 5, \"helpfulness\": 5, \"tone_safety\": 5, \"escalation_appropriateness\": 5, \"justification\": \"brief reasoning\"}"
+            )
+            user_prompt = (
+                f"Customer Query: {customer_text}\n"
+                f"Predicted Intent: {predicted_intent} (Ground Truth: {true_intent})\n"
+                f"Predicted Escalation: {predicted_escalation} (Ground Truth: {true_escalation})\n"
+                f"Predicted Reply: {predicted_reply}\n"
+                f"Reference Gold Standard Reply: {reference_reply}"
+            )
+            raw_eval = self.llm.generate(system_prompt, user_prompt)
+            try:
+                # Extract JSON if enclosed in markdown
+                match = re.search(r'\{.*?\}', raw_eval, re.DOTALL)
+                if match:
+                    parsed = json.loads(match.group(0))
+                    g = int(parsed.get("groundedness", 4))
+                    h = int(parsed.get("helpfulness", 4))
+                    t = int(parsed.get("tone_safety", 5))
+                    e = int(parsed.get("escalation_appropriateness", 4))
+                    overall = round(g * 0.35 + h * 0.25 + t * 0.20 + e * 0.20, 2)
+                    return {
+                        "groundedness": g,
+                        "helpfulness": h,
+                        "tone_safety": t,
+                        "escalation_appropriateness": e,
+                        "overall_score": float(overall),
+                        "justification": str(parsed.get("justification", "LLM-as-a-Judge API rating."))
+                    }
+            except Exception:
+                pass # Fallback to deterministic rubric below
+
+        # Deterministic Rubric Scoring (100% reproducible baseline)
+        reply_lower = predicted_reply.lower()
+
         # 1. Groundedness (1-5)
-        # Checks if URL or resolution policy matches official domain and no false promises
         groundedness = 5
         if "amazon.com" not in reply_lower and "dm" not in reply_lower:
             groundedness -= 1
@@ -54,13 +99,10 @@ class LLMJudgeRubric:
         if predicted_escalation == true_escalation:
             escalation_score = 5
         elif predicted_escalation is False and true_escalation is True:
-            # False Negative on escalation is severe (safety violation / unhandled PII)
-            escalation_score = 1
+            escalation_score = 1  # Critical false negative
         else:
-            # False Positive (over-escalation is minor friction)
-            escalation_score = 3
+            escalation_score = 3  # False positive over-escalation
 
-        # Weighted Overall Score
         overall = round(
             groundedness * 0.35 + helpfulness * 0.25 + tone_safety * 0.20 + escalation_score * 0.20,
             2
