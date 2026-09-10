@@ -19,6 +19,8 @@ data/raw/*
 !data/raw/.gitkeep
 data/processed/*.parquet
 data/processed/*.h5
+customer-support-on-twitter/
+data/processed/amazon_qa_pairs_10k.jsonl
 
 # API Keys & Secrets
 kaggle.json
