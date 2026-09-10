@@ -1,6 +1,6 @@
 {
-  "id": "candidate/hiver-ai-customer-support-agent",
-  "title": "Hiver AI Customer Support Agent & Evaluation Benchmark",
+  "id": "rohanalexbimal/hiver-ai-support-agent",
+  "title": "Hiver AI Customer Support Agent & Dual T4 Pipeline",
   "code_file": "notebooks/kaggle_gpu_support_pipeline.ipynb",
   "language": "python",
   "kernel_type": "notebook",
