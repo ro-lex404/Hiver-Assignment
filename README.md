@@ -23,7 +23,7 @@ The entire codebase is **self-contained with pure-Python fallbacks**—no massiv
 
 ### 1. Clone & Set Up Environment
 ```bash
-git clone https://github.com/your-username/Hiver-Assignment.git
+git clone https://github.com/ro-lex404/Hiver-Assignment.git
 cd Hiver-Assignment
 # Optional: pip install -r requirements.txt
 ```
@@ -114,8 +114,8 @@ Hiver-Assignment/
 ├── notebooks/
 │   └── kaggle_gpu_support_pipeline.ipynb # Cloud GPU notebook for Kaggle execution
 ├── reports/
-│   ├── REPORT.md                     # Comprehensive 6-page evaluation report (All deliverables)
-│   ├── DECISION_LOG.md               # 15 non-obvious engineering decisions & trade-offs
+│   ├── REPORT.md                     # Comprehensive 6-page evaluation report (All deliverables + LoRA Benchmark)
+│   ├── DECISION_LOG.md               # 16 non-obvious engineering decisions & trade-offs
 │   └── metrics/                      # Benchmark summary artifacts and JSON metrics
 ├── scripts/
 │   ├── run_pipeline.py               # Interactive CLI pipeline runner
@@ -153,8 +153,8 @@ Hiver-Assignment/
 1. **Deliverable 1 (Runnable Pipeline)**: Instant reproduction in < 15 seconds via `python scripts/run_evaluation.py`.
 2. **Deliverable 2 (Golden Evaluation Set)**: 200 hand-labelled examples with complete annotations in `data/golden_set/golden_eval_200.jsonl` + `data/golden_set/SAMPLING_METHODOLOGY.md`.
 3. **Deliverable 3 (Evaluation Harness)**: Automated metrics + LLM-as-a-judge rubric + Human-Judge agreement calibration in `src/evaluation/`.
-4. **Deliverable 4 (Report)**: Complete evaluation report covering Problem Framing, Results vs 2 Baselines, Top 5 Failure Modes with real examples, mandatory *"What is misleading about my headline number?"* section, and 1-week roadmap in [`reports/REPORT.md`](reports/REPORT.md).
-5. **Deliverable 5 (Decision Log)**: 15 non-obvious engineering decisions and trade-offs in [`reports/DECISION_LOG.md`](reports/DECISION_LOG.md).
+4. **Deliverable 4 (Report)**: Complete evaluation report covering Problem Framing, Results vs 2 Baselines, Top 5 Failure Modes with real examples, mandatory *"What is misleading about my headline number?"* section, 3-Epoch Dual T4 QLoRA Fine-Tuning benchmark, and 1-week roadmap in [`reports/REPORT.md`](reports/REPORT.md).
+5. **Deliverable 5 (Decision Log)**: 16 non-obvious engineering decisions and trade-offs in [`reports/DECISION_LOG.md`](reports/DECISION_LOG.md).
 
 ---
 
@@ -162,5 +162,5 @@ Hiver-Assignment/
 
 To run large-scale training / fine-tuning on Kaggle GPU instances without downloading the 516MB dataset locally:
 1. Open [`notebooks/kaggle_gpu_support_pipeline.ipynb`](notebooks/kaggle_gpu_support_pipeline.ipynb) on Kaggle.
-2. Attach the dataset `thoughtvector/customer-support-on-twitter`.
-3. Enable GPU Accelerator (T4 x2 or P100) and execute end-to-end!
+2. Verified on Kaggle Dual Tesla T4 GPUs: full 3-epoch QLoRA fine-tuning of `Llama-3.2-1B-Instruct` across 5,000 Amazon support conversations (`rohanalexbimal/hiver-ai-support-agent`).
+
