@@ -38,12 +38,17 @@ python scripts/run_evaluation.py
 python scripts/evaluate_judge_agreement.py
 ```
 
-### 4. Interactive Real-Time Tweet Test
+### 4. Run Fine-Tuned Model vs. Base Model LLM Judge Evaluation
+```bash
+python scripts/evaluate_finetuned_judge.py
+```
+
+### 5. Interactive Real-Time Tweet Test
 ```bash
 python scripts/run_pipeline.py "My credit card was charged $139 for Prime renewal but I cancelled it 2 weeks ago!"
 ```
 
-### 5. Run Test Suite
+### 6. Run Test Suite
 ```bash
 python tests/run_tests.py
 ```

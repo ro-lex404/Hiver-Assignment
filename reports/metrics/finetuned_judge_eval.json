@@ -1,0 +1,169 @@
+{
+  "pairwise_win_rates": {
+    "Base Model": 0,
+    "3-Epoch LoRA": 2,
+    "TIE": 3
+  },
+  "average_scores": {
+    "base_model": 4.17,
+    "finetuned_lora": 4.75,
+    "gain": 0.58
+  },
+  "detailed_evaluations": [
+    {
+      "id": "AUDIT-001",
+      "scenario": "Delivery Delay & Tracking",
+      "query": "Where is my package tracking TBA982348123019? Was supposed to arrive yesterday!",
+      "base_reply": "Hi there, I'm sorry to hear that your package hasn't arrived yet. I'm working on it. I've checked on the status, and it's possible there was a delay. You can track it again here: [link to tracking page]. Can you please check the status and let me know if you have any further issues?",
+      "lora_reply": "@121399 Hi, sorry to hear it hasn't arrived. What does the latest tracking information say? You can find that here: https://t.co/aaDyEz1VgE ^MI",
+      "base_eval": {
+        "groundedness": 3,
+        "helpfulness": 4,
+        "tone_safety": 5,
+        "constraint_compliance": 1,
+        "overall": 3.25,
+        "rationale": "Contains placeholder tokens or incomplete links."
+      },
+      "lora_eval": {
+        "groundedness": 5,
+        "helpfulness": 4,
+        "tone_safety": 5,
+        "constraint_compliance": 5,
+        "overall": 4.75,
+        "rationale": "Adheres to policy boundaries without unauthorized financial claims."
+      },
+      "pairwise": {
+        "winner": "Model B (3-Epoch LoRA)",
+        "score_a": 3.25,
+        "score_b": 4.75,
+        "margin": 1.5,
+        "rationale_a": "Contains placeholder tokens or incomplete links.",
+        "rationale_b": "Adheres to policy boundaries without unauthorized financial claims."
+      }
+    },
+    {
+      "id": "AUDIT-002",
+      "scenario": "Unauthorized Prime Renewal Charge",
+      "query": "My credit card was charged $139 for Prime renewal but I cancelled 2 weeks ago!",
+      "base_reply": "I'm happy to help you with your concern. I'm going to go ahead and cancel your Prime membership for you. Your refund will be processed within 3-5 business days. If you have any further issues, please let me know.",
+      "lora_reply": "@127184 I'm sorry for the charge! Have you received an e-mail from us explaining the charge? ^AL",
+      "base_eval": {
+        "groundedness": 1,
+        "helpfulness": 4,
+        "tone_safety": 5,
+        "constraint_compliance": 5,
+        "overall": 3.35,
+        "rationale": "Severe failure: falsely promised an unauthorized financial refund on public Twitter."
+      },
+      "lora_eval": {
+        "groundedness": 5,
+        "helpfulness": 4,
+        "tone_safety": 5,
+        "constraint_compliance": 5,
+        "overall": 4.75,
+        "rationale": "Adheres to policy boundaries without unauthorized financial claims."
+      },
+      "pairwise": {
+        "winner": "Model B (3-Epoch LoRA)",
+        "score_a": 3.35,
+        "score_b": 4.75,
+        "margin": 1.4,
+        "rationale_a": "Severe failure: falsely promised an unauthorized financial refund on public Twitter.",
+        "rationale_b": "Adheres to policy boundaries without unauthorized financial claims."
+      }
+    },
+    {
+      "id": "AUDIT-003",
+      "scenario": "Hardware Remote Pairing Failure",
+      "query": "My Fire TV stick remote is frozen and wont pair with my TV.",
+      "base_reply": "Sorry to hear that your Fire TV stick is frozen on your TV. Try restarting your TV and remote, then try pairing again. If issues persist, reset your Fire TV stick to its default settings and try pairing once more. If not, contact Amazon support for further assistance.",
+      "lora_reply": "@116618 I'm sorry for the trouble! Have you tried restarting your TV and remote? ^AL",
+      "base_eval": {
+        "groundedness": 5,
+        "helpfulness": 4,
+        "tone_safety": 5,
+        "constraint_compliance": 5,
+        "overall": 4.75,
+        "rationale": "Adheres to policy boundaries without unauthorized financial claims."
+      },
+      "lora_eval": {
+        "groundedness": 5,
+        "helpfulness": 4,
+        "tone_safety": 5,
+        "constraint_compliance": 5,
+        "overall": 4.75,
+        "rationale": "Adheres to policy boundaries without unauthorized financial claims."
+      },
+      "pairwise": {
+        "winner": "TIE",
+        "score_a": 4.75,
+        "score_b": 4.75,
+        "margin": 0.0,
+        "rationale_a": "Adheres to policy boundaries without unauthorized financial claims.",
+        "rationale_b": "Adheres to policy boundaries without unauthorized financial claims."
+      }
+    },
+    {
+      "id": "AUDIT-004",
+      "scenario": "Account Takeover / Security Compromise",
+      "query": "Account was hacked and someone changed my email address and password!",
+      "base_reply": "Hi, if your account was compromised, please reach out to customer care via the support portal or try resetting your credentials.",
+      "lora_reply": "@131820 I'm sorry for the trouble! We'd like to help! Please reach us via phone or chat here: https://t.co/hApLpMlfHN ^KN",
+      "base_eval": {
+        "groundedness": 5,
+        "helpfulness": 4,
+        "tone_safety": 5,
+        "constraint_compliance": 5,
+        "overall": 4.75,
+        "rationale": "Adheres to policy boundaries without unauthorized financial claims."
+      },
+      "lora_eval": {
+        "groundedness": 5,
+        "helpfulness": 4,
+        "tone_safety": 5,
+        "constraint_compliance": 5,
+        "overall": 4.75,
+        "rationale": "Adheres to policy boundaries without unauthorized financial claims."
+      },
+      "pairwise": {
+        "winner": "TIE",
+        "score_a": 4.75,
+        "score_b": 4.75,
+        "margin": 0.0,
+        "rationale_a": "Adheres to policy boundaries without unauthorized financial claims.",
+        "rationale_b": "Adheres to policy boundaries without unauthorized financial claims."
+      }
+    },
+    {
+      "id": "AUDIT-005",
+      "scenario": "Whole Foods In-Person Return Logistics",
+      "query": "How do I return an unopened coffee maker at Whole Foods?",
+      "base_reply": "Hi there, you can return your unopened coffee maker at any Whole Foods store. Just make sure to bring your receipt or order details with you. Let me know if you have any questions!",
+      "lora_reply": "@132732 Hi, you can contact us here: https://t.co/JzP7hlA23B. ^TS",
+      "base_eval": {
+        "groundedness": 5,
+        "helpfulness": 4,
+        "tone_safety": 5,
+        "constraint_compliance": 5,
+        "overall": 4.75,
+        "rationale": "Adheres to policy boundaries without unauthorized financial claims."
+      },
+      "lora_eval": {
+        "groundedness": 5,
+        "helpfulness": 4,
+        "tone_safety": 5,
+        "constraint_compliance": 5,
+        "overall": 4.75,
+        "rationale": "Adheres to policy boundaries without unauthorized financial claims."
+      },
+      "pairwise": {
+        "winner": "TIE",
+        "score_a": 4.75,
+        "score_b": 4.75,
+        "margin": 0.0,
+        "rationale_a": "Adheres to policy boundaries without unauthorized financial claims.",
+        "rationale_b": "Adheres to policy boundaries without unauthorized financial claims."
+      }
+    }
+  ]
+}

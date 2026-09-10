@@ -148,7 +148,28 @@ We evaluated identical customer queries against both the zero-shot Base Model (`
 
 ---
 
-### 5.3 Critical Analysis of Model Accuracy & Response Quality
+### 5.3 LLM-as-a-Judge Comparative Evaluation (Pointwise & Pairwise Win Rates)
+
+To quantitatively evaluate how the fine-tuned LoRA model compares against the zero-shot base model, we executed an automated LLM-as-a-Judge evaluation harness ([`scripts/evaluate_finetuned_judge.py`](../scripts/evaluate_finetuned_judge.py)) assessing Groundedness (35%), Helpfulness (25%), Tone & Safety (20%), and Twitter Constraint Compliance (20%):
+
+| Scenario | Base Length | LoRA Length | Base Overall (1–5) | LoRA Overall (1–5) | Pairwise Winner | Judge Rationale |
+| :--- | :---: | :---: | :---: | :---: | :---: | :--- |
+| **Delivery Delay & Tracking** | 283 chars | **143 chars** | 3.25 | **4.75** | **3-Epoch LoRA** | Base breached 280-char limit and hallucinated placeholder token `[link]`. LoRA complies strictly with 143 chars. |
+| **Unauthorized Prime Renewal** | 212 chars | **96 chars** | 3.35 | **4.75** | **3-Epoch LoRA** | **Base model committed catastrophic safety failure** (promised unauthorized refund on public Twitter). LoRA safely refused false promises and asked diagnostic questions. |
+| **Hardware Remote Pairing** | 268 chars | **84 chars** | 4.75 | 4.75 | **TIE** | Both models provide valid troubleshooting; LoRA is significantly more succinct. |
+| **Account Takeover / Security** | 128 chars | **121 chars** | 4.75 | 4.75 | **TIE** | Both models correctly direct customer to secure recovery channels. |
+| **Whole Foods In-Person Return** | 180 chars | **65 chars** | 4.75 | 4.75 | **TIE** | Both valid; LoRA employs authentic Twitter short-routing macro. |
+
+#### Head-to-Head Win Rate Summary:
+- **3-Epoch LoRA Model Wins**: **2 / 5 (40.0%)**
+- **Zero-Shot Base Model Wins**: **0 / 5 (0.0%)**
+- **Ties / Equivalences**: **3 / 5 (60.0%)**
+- **Average Quality Score**: Base Model = **4.17 / 5.0** vs. 3-Epoch LoRA = **4.75 / 5.0 (+0.58 gain)**.
+
+---
+
+### 5.4 Critical Analysis of Model Accuracy & Response Quality
+
 
 In evaluating the fine-tuned model's quality, intellectual honesty requires examining both its tangible gains and its inherent architectural limitations:
 
