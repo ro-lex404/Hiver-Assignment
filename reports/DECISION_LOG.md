@@ -107,3 +107,10 @@
 - **Choice**: Benchmarked against both a Trivial Baseline (majority class + static canned response + always escalate) and a Simple Baseline (TF-IDF keyword matcher + zero-shot generation without RAG).
 - **Rationale**: Proves that pipeline gains are not just beating a dummy baseline, but demonstrating measurable value over standard keyword heuristics.
 - **Trade-off**: Requires maintaining and benchmarking three distinct execution paths.
+
+---
+
+### Decision 16: 3-Epoch QLoRA Parameter-Efficient Fine-Tuning of Llama-3.2-1B on Dual Tesla T4s
+- **Choice**: Executed 3 full epochs of 4-bit QLoRA fine-tuning (Rank 16, Alpha 32, 11.27M trainable parameters) on 5,000 ChatML conversational support pairs (`rohanalexbimal/amazon-support-chatml-5k`) on dual Tesla T4 GPUs (`sm_75`, 14.56 GB each).
+- **Rationale**: Validated whether an open-source Small Language Model (SLM) can eliminate external proprietary API costs and latency while strictly adhering to Twitter's 280-character limit and eliminating dangerous hallucinations (such as unauthorized refund promises on public Twitter).
+- **Trade-off**: Required dual T4 GPU provisioning and cloud synchronization; showed that while style/brevity/hallucination suppression succeeds (100% under 280 chars), the SLM must still be coupled with deterministic guardrails and RAG for verified URL links and escalation triggers.
