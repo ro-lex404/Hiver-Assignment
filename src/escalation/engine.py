@@ -95,6 +95,7 @@ class EscalationEngine:
 
         return {
             "should_escalate": bool(should_escalate),
+            "routing_action": "ESCALATE_TO_HUMAN" if should_escalate else "AUTO_HANDLE",
             "risk_score": min(round(risk_score, 2), 1.0),
             "stated_reason": stated_reason,
             "signals_triggered": signals

@@ -19,7 +19,7 @@ def main():
 
     result = pipeline.process(query)
     print(f"Predicted Intent : {result['intent']} (Confidence: {result['confidence']})")
-    print(f"Escalate to Human: {result['escalation']['should_escalate']} (Risk Score: {result['escalation']['risk_score']})")
+    print(f"Routing Decision : {result['routing_action']} (Risk Score: {result['escalation']['risk_score']})")
     print(f"Stated Reason    : {result['escalation']['stated_reason']}")
     print(f"Draft Reply      : {result['draft_reply']}")
     print(f"Latency          : {result['latency_ms']} ms")

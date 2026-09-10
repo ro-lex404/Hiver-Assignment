@@ -54,6 +54,7 @@ class SupportAgentPipeline:
             "customer_text": clean_text,
             "intent": intent,
             "confidence": confidence,
+            "routing_action": escalation_res["routing_action"],
             "top_candidates": intent_res.get("top_candidates", []),
             "retrieved_context": retrieved_docs,
             "escalation": escalation_res,
