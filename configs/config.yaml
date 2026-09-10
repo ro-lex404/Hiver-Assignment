@@ -4,8 +4,8 @@ brand:
   max_tweet_chars: 280
 
 model:
-  provider: "mock_or_llm"
-  primary_model: "gemini-3.7-flash"
+  provider: "groq"
+  primary_model: "qwen/qwen3.8-27b"
   temperature: 0.1
   max_tokens: 250
 

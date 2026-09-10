@@ -1,7 +1,9 @@
 import os
+import time
 import json
 import urllib.request
 import urllib.error
+from pathlib import Path
 from typing import Dict, Any, List, Optional
 from src.utils import logger
 
@@ -21,6 +23,22 @@ class LLMClient:
         temperature: float = 0.1,
         max_tokens: int = 300
     ):
+        # Load local .env if present
+        env_file = Path(__file__).resolve().parent.parent / ".env"
+        if env_file.exists():
+            try:
+                with open(env_file, "r", encoding="utf-8") as f:
+                    for line in f:
+                        line = line.strip()
+                        if line and not line.startswith("#") and "=" in line:
+                            k, v = line.split("=", 1)
+                            k = k.strip()
+                            v = v.strip().strip("'\"")
+                            if k and not os.environ.get(k):
+                                os.environ[k] = v
+            except Exception:
+                pass
+
         # Sanitize and validate API keys
         self.groq_api_key = os.getenv("GROQ_API_KEY", "")
         self.openai_api_key = os.getenv("OPENAI_API_KEY", "")
@@ -29,7 +47,7 @@ class LLMClient:
         def is_valid_key(key: str) -> bool:
             return bool(key and len(key) > 15 and not key.startswith("your_"))
 
-        # Auto-detect active provider
+        # Auto-detect active provider (Groq prioritized for speed and free tier)
         if provider:
             self.provider = provider
         elif is_valid_key(self.groq_api_key):
@@ -45,7 +63,7 @@ class LLMClient:
         if model:
             self.model = model
         elif self.provider == "groq":
-            self.model = "llama-3.3-70b-versatile"
+            self.model = "qwen/qwen3.8-27b"
         elif self.provider == "openai":
             self.model = "gpt-4o-mini"
         elif self.provider == "gemini":
@@ -72,7 +90,8 @@ class LLMClient:
         url = "https://api.groq.com/openai/v1/chat/completions"
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.groq_api_key}"
+            "Authorization": f"Bearer {self.groq_api_key}",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         }
         payload = {
             "model": self.model,
@@ -83,14 +102,22 @@ class LLMClient:
             "temperature": self.temperature,
             "max_tokens": self.max_tokens
         }
-        try:
-            req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers)
-            with urllib.request.urlopen(req, timeout=10) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-                return data["choices"][0]["message"]["content"].strip()
-        except Exception as e:
-            logger.warning(f"Groq API call failed: {e}. Falling back to local semantic engine.")
-            return self._local_fallback(system_prompt, user_prompt)
+        for attempt in range(2):
+            try:
+                req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers)
+                with urllib.request.urlopen(req, timeout=10) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+                    return data["choices"][0]["message"]["content"].strip()
+            except urllib.error.HTTPError as e:
+                if e.code == 429 and attempt == 0:
+                    time.sleep(1.5)
+                    continue
+                logger.warning(f"Groq API call failed: {e}. Falling back to local semantic engine.")
+                return self._local_fallback(system_prompt, user_prompt)
+            except Exception as e:
+                logger.warning(f"Groq API call failed: {e}. Falling back to local semantic engine.")
+                return self._local_fallback(system_prompt, user_prompt)
+        return self._local_fallback(system_prompt, user_prompt)
 
     def _call_openai(self, system_prompt: str, user_prompt: str) -> str:
         url = "https://api.openai.com/v1/chat/completions"
