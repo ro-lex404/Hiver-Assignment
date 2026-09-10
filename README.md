@@ -43,12 +43,17 @@ python scripts/evaluate_judge_agreement.py
 python scripts/evaluate_finetuned_judge.py
 ```
 
-### 5. Interactive Real-Time Tweet Test
+### 5. Run Secondary Banking77 Cross-Domain Intent Benchmark
+```bash
+python scripts/benchmark_banking77.py
+```
+
+### 6. Interactive Real-Time Tweet Test
 ```bash
 python scripts/run_pipeline.py "My credit card was charged $139 for Prime renewal but I cancelled it 2 weeks ago!"
 ```
 
-### 6. Run Test Suite
+### 7. Run Test Suite
 ```bash
 python tests/run_tests.py
 ```
@@ -124,8 +129,10 @@ Hiver-Assignment/
 │   └── metrics/                      # Benchmark summary artifacts and JSON metrics
 ├── scripts/
 │   ├── run_pipeline.py               # Interactive CLI pipeline runner
-│   ├── run_evaluation.py             # Full automated evaluation benchmark
+│   ├── run_evaluation.py             # Full automated evaluation benchmark (200 golden cases)
 │   ├── evaluate_judge_agreement.py   # Human vs LLM judge calibration script
+│   ├── evaluate_finetuned_judge.py   # LLM judge benchmark for Base vs LoRA model
+│   ├── benchmark_banking77.py        # Secondary Banking77 cross-domain intent benchmark
 │   ├── download_kaggle_data.py       # Kaggle dataset downloader helper
 │   └── kaggle_push.py                # Automate pushing kernel to Kaggle
 ├── src/

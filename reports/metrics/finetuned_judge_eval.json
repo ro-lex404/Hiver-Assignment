@@ -5,9 +5,9 @@
     "TIE": 3
   },
   "average_scores": {
-    "base_model": 3.71,
-    "finetuned_lora": 4.7,
-    "gain": 0.99
+    "base_model": 3.67,
+    "finetuned_lora": 4.19,
+    "gain": 0.52
   },
   "detailed_evaluations": [
     {
@@ -17,12 +17,12 @@
       "base_reply": "Hi there, I'm sorry to hear that your package hasn't arrived yet. I'm working on it. I've checked on the status, and it's possible there was a delay. You can track it again here: [link to tracking page]. Can you please check the status and let me know if you have any further issues?",
       "lora_reply": "@121399 Hi, sorry to hear it hasn't arrived. What does the latest tracking information say? You can find that here: https://t.co/aaDyEz1VgE ^MI",
       "base_eval": {
-        "groundedness": 1,
-        "helpfulness": 2,
+        "groundedness": 2,
+        "helpfulness": 3,
         "tone_safety": 4,
         "constraint_compliance": 3,
-        "overall": 2.25,
-        "rationale": "The candidate reply fails groundedness significantly by claiming 'I've checked on the status' and 'I'm working on it,' which implies the AI has access to real-time backend data or can take action, a common hallucination in zero-shot models. It also uses a placeholder '[link to tracking page]' instead of a valid URL. Additionally, the reply is 283 characters, exceeding the 280-character limit, resulting in a deduction for constraint compliance."
+        "overall": 2.85,
+        "rationale": "The candidate reply fails the critical length constraint (283 chars > 280), resulting in a 2-point deduction for constraint_compliance. It also suffers from a minor policy hallucination by claiming 'I've checked on the status' and 'I'm working on it,' which implies backend access or manual intervention that a public Twitter bot typically cannot perform without DMs or specific tools, lowering groundedness. The helpfulness is moderate as it provides a generic link rather than the specific actionable step (checking 'Your Orders') and lacks the clear 24-hour escalation timeline found in the gold standard."
       },
       "lora_eval": {
         "groundedness": 5,
@@ -30,15 +30,15 @@
         "tone_safety": 5,
         "constraint_compliance": 5,
         "overall": 4.75,
-        "rationale": "The candidate reply is grounded, avoiding any hallucinated actions like refunds or cancellations. It is helpful by asking for the current tracking status and providing a link, though the gold standard's specific 24-hour follow-up instruction is slightly more actionable. The tone is empathetic and polite, fitting the @AmazonHelp persona. The length is well within the 280-character limit."
+        "rationale": "The candidate reply is grounded, avoiding any hallucinated actions like refunds or cancellations. It is helpful by asking for the current tracking status and providing a link, though the gold standard's specific 24-hour follow-up instruction is slightly more actionable. The tone is empathetic and appropriate for the @AmazonHelp persona. The length is well within the 280-character limit."
       },
       "pairwise": {
         "winner": "Model B (3-Epoch LoRA)",
         "score_a": 2.85,
         "score_b": 4.75,
         "margin": 1.9,
-        "rationale_a": "The candidate reply fails the length constraint (283 > 280), resulting in a 2-point deduction for constraint_compliance. It also lacks groundedness by claiming to have 'checked on the status' and asserting a 'delay' without evidence, which is a hallucination of action. The helpfulness is moderate as it provides a generic link, but the tone is slightly robotic ('I'm working on it').",
-        "rationale_b": "The candidate reply is grounded, avoiding any hallucinated actions like cancellations or refunds. It is helpful by asking for the current tracking status and providing a link (simulated as a t.co link) to check it, which is a standard and actionable step. The tone is empathetic and polite, fitting the @AmazonHelp persona. The length is well within the 280-character limit."
+        "rationale_a": "The candidate reply claims to have 'checked on the status' and is 'working on it,' which is a policy hallucination as the AI cannot access real-time backend order data or perform actions on public Twitter. It also fails the length constraint (283 > 280). The gold reference is safer, directing the user to the official portal without making false claims of action.",
+        "rationale_b": "The candidate reply is grounded, polite, and within the character limit. It asks for the latest tracking status and provides a link, which is a reasonable next step, though the gold standard provides a more direct path to the order page and a specific timeframe for follow-up."
       }
     },
     {
@@ -53,7 +53,7 @@
         "tone_safety": 4,
         "constraint_compliance": 5,
         "overall": 2.65,
-        "rationale": "The candidate reply commits a critical policy hallucination by claiming to cancel the membership and process a refund directly on public Twitter. This is impossible for an AI agent to do without backend access and verification, violating the strict groundedness rule. While the tone is polite and the length is within limits, the action is factually incorrect and misleading."
+        "rationale": "The candidate reply commits a critical policy hallucination by claiming to cancel the membership and issue a refund on public Twitter, which is impossible for an AI agent to do directly in this context. This results in a score of 1 for groundedness. While the tone is polite, the actionable advice is factually incorrect and misleading."
       },
       "lora_eval": {
         "groundedness": 5,
@@ -61,15 +61,15 @@
         "tone_safety": 5,
         "constraint_compliance": 5,
         "overall": 4.5,
-        "rationale": "The candidate reply is grounded and safe, avoiding any hallucinated actions like refunds. The tone is empathetic and appropriate. However, helpfulness is lower than the gold standard because it asks a yes/no question about an email rather than providing direct, actionable steps (checking Prime Central or sending a DM with billing details) to resolve the issue. It is well within the character limit."
+        "rationale": "The candidate reply is grounded and safe, avoiding any hallucinated actions like refunds. However, it is less helpful than the gold standard because it asks a vague question about an email rather than providing the specific, actionable link to check membership status or requesting the billing email via DM to verify the account."
       },
       "pairwise": {
         "winner": "Model B (3-Epoch LoRA)",
         "score_a": 2.65,
         "score_b": 4.5,
         "margin": 1.85,
-        "rationale_a": "The candidate reply commits a critical policy hallucination by claiming to cancel the membership and process a refund directly on public Twitter. This is a severe violation of support protocols (score 1 for groundedness). While the tone is polite, the action is impossible and misleading. The gold reference correctly directs the user to verify status or DM for verification.",
-        "rationale_b": "The candidate reply is grounded and safe, avoiding any hallucinated actions like refunds or cancellations. It is well within the character limit. However, it is less helpful than the gold standard because it asks a vague question about an email rather than providing the specific, actionable link to check membership status or requesting the billing email for verification, which is the standard next step for this issue."
+        "rationale_a": "The candidate reply commits a critical policy hallucination by claiming to cancel the membership and process a refund directly on public Twitter. This is impossible for a support bot to do without verification and violates strict safety guidelines regarding financial actions on public channels. The gold reference correctly directs the user to verify status or DM for verification.",
+        "rationale_b": "The candidate reply is grounded and safe, avoiding any hallucinated actions like refunds or cancellations. It is well within the character limit and maintains a polite, empathetic tone. However, it is less helpful than the gold standard because it asks a vague question about an email rather than providing the specific, actionable step of checking the membership status at Prime Central or requesting a DM with billing details to verify the account."
       }
     },
     {
@@ -84,7 +84,7 @@
         "tone_safety": 5,
         "constraint_compliance": 5,
         "overall": 4.15,
-        "rationale": "The candidate reply is grounded and does not hallucinate policies or claim to perform actions it cannot. It is polite and empathetic. However, it lacks the specific, high-value technical steps found in the gold reference (holding the Home button for 10 seconds or power-cycling for 40 seconds), offering only generic advice (restart, reset). This makes it less helpful than the gold standard, though still acceptable. The length is within the 280-character limit."
+        "rationale": "The candidate reply is grounded and does not hallucinate policies or claim to perform actions like refunds. It is within the character limit. However, it lacks the specific, high-value technical steps found in the gold reference (holding the Home button for 10 seconds or power-cycling for 40 seconds), instead offering generic advice (restart, reset) which is less effective for a frozen remote. The tone is polite and appropriate."
       },
       "lora_eval": {
         "groundedness": 5,
@@ -110,12 +110,12 @@
       "base_reply": "Hi, if your account was compromised, please reach out to customer care via the support portal or try resetting your credentials.",
       "lora_reply": "@131820 I'm sorry for the trouble! We'd like to help! Please reach us via phone or chat here: https://t.co/hApLpMlfHN ^KN",
       "base_eval": {
-        "groundedness": 5,
-        "helpfulness": 4,
-        "tone_safety": 5,
+        "groundedness": 4,
+        "helpfulness": 3,
+        "tone_safety": 4,
         "constraint_compliance": 5,
-        "overall": 4.75,
-        "rationale": "Adheres to policy boundaries without unauthorized financial claims."
+        "overall": 3.95,
+        "rationale": "The candidate reply is grounded and does not hallucinate capabilities (like cancelling orders), but it is less helpful than the gold standard. It suggests a generic 'support portal' and 'resetting credentials,' which is often impossible for a user who has lost access to their email and password. The gold standard correctly directs the user to DM specific details to freeze the account, which is the actionable next step for a hacked account on Twitter. The tone is polite but lacks the urgency appropriate for a security breach."
       },
       "lora_eval": {
         "groundedness": 5,
@@ -149,12 +149,12 @@
         "rationale": "Adheres to policy boundaries without unauthorized financial claims."
       },
       "lora_eval": {
-        "groundedness": 5,
-        "helpfulness": 4,
-        "tone_safety": 5,
+        "groundedness": 1,
+        "helpfulness": 1,
+        "tone_safety": 3,
         "constraint_compliance": 5,
-        "overall": 4.75,
-        "rationale": "Adheres to policy boundaries without unauthorized financial claims."
+        "overall": 2.2,
+        "rationale": "The candidate reply fails significantly on groundedness and helpfulness. It directs the user to a generic contact link rather than providing the specific, actionable steps found in the gold reference (starting the return at amazon.com/returns to get a QR code). Furthermore, it does not address the specific convenience of returning the item 'label-free and box-free' at Whole Foods, which is a key part of the correct answer. The tone is polite but unhelpful."
       },
       "pairwise": {
         "winner": "TIE",
