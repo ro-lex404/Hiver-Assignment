@@ -10,7 +10,7 @@ class LLMClient:
     Universal lightweight LLM Client supporting:
     1. Groq Cloud API (llama-3.3-70b-versatile, llama-3.1-8b-instant) - Ultra-fast & free tier
     2. OpenAI API (gpt-4o-mini, gpt-3.5-turbo)
-    3. Google Gemini API (gemini-1.5-flash, gemini-1.5-pro)
+    3. Google Gemini API (gemini-3.7-flash, gemini-2.5-pro)
     4. Deterministic Local Semantic Fallback (zero-key instant offline reproduction)
     """
 
@@ -49,7 +49,7 @@ class LLMClient:
         elif self.provider == "openai":
             self.model = "gpt-4o-mini"
         elif self.provider == "gemini":
-            self.model = "gemini-1.5-flash"
+            self.model = "gemini-3.7-flash"
         else:
             self.model = "local_heuristic"
 

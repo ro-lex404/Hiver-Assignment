@@ -5,7 +5,7 @@ brand:
 
 model:
   provider: "mock_or_llm"
-  primary_model: "gemini-1.5-flash"
+  primary_model: "gemini-3.7-flash"
   temperature: 0.1
   max_tokens: 250
 
