@@ -21,18 +21,22 @@ class LLMClient:
         temperature: float = 0.1,
         max_tokens: int = 300
     ):
-        self.groq_api_key = os.getenv("GROQ_API_KEY")
-        self.openai_api_key = os.getenv("OPENAI_API_KEY")
-        self.gemini_api_key = os.getenv("GEMINI_API_KEY")
+        # Sanitize and validate API keys
+        self.groq_api_key = os.getenv("GROQ_API_KEY", "")
+        self.openai_api_key = os.getenv("OPENAI_API_KEY", "")
+        self.gemini_api_key = os.getenv("GEMINI_API_KEY", "")
+
+        def is_valid_key(key: str) -> bool:
+            return bool(key and len(key) > 15 and not key.startswith("your_"))
 
         # Auto-detect active provider
         if provider:
             self.provider = provider
-        elif self.groq_api_key:
+        elif is_valid_key(self.groq_api_key):
             self.provider = "groq"
-        elif self.openai_api_key:
+        elif is_valid_key(self.openai_api_key):
             self.provider = "openai"
-        elif self.gemini_api_key:
+        elif is_valid_key(self.gemini_api_key):
             self.provider = "gemini"
         else:
             self.provider = "local_semantic"
