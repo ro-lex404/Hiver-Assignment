@@ -203,8 +203,8 @@
       "false_positives": 5
     },
     "lexical": {
-      "mean_token_jaccard": 0.1599,
-      "avg_char_length": 170.4,
+      "mean_token_jaccard": 0.1595,
+      "avg_char_length": 168.9,
       "pct_within_280_chars": 100.0
     },
     "judge_means": {
