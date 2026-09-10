@@ -1,0 +1,16 @@
+{
+  "id": "candidate/hiver-ai-customer-support-agent",
+  "title": "Hiver AI Customer Support Agent & Evaluation Benchmark",
+  "code_file": "notebooks/kaggle_gpu_support_pipeline.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "true",
+  "enable_gpu": "true",
+  "enable_tpu": "false",
+  "enable_internet": "true",
+  "dataset_sources": [
+    "thoughtvector/customer-support-on-twitter"
+  ],
+  "competition_sources": [],
+  "kernel_sources": []
+}
