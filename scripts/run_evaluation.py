@@ -29,7 +29,8 @@ def run_benchmark():
         "Proposed Support Agent": SupportAgentPipeline()
     }
 
-    judge = LLMJudgeRubric()
+    use_api = "--use-api" in sys.argv
+    judge = LLMJudgeRubric(use_api=use_api)
     summary_results = []
     detailed_metrics = {}
 

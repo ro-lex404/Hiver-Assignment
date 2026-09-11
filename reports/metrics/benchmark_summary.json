@@ -203,16 +203,16 @@
       "false_positives": 5
     },
     "lexical": {
-      "mean_token_jaccard": 0.1595,
-      "avg_char_length": 168.9,
+      "mean_token_jaccard": 0.159,
+      "avg_char_length": 169.9,
       "pct_within_280_chars": 100.0
     },
     "judge_means": {
-      "groundedness": 4.32,
+      "groundedness": 4.33,
       "helpfulness": 4.53,
       "tone_safety": 5.0,
       "escalation": 3.91,
-      "overall": 4.427
+      "overall": 4.43
     }
   }
 }

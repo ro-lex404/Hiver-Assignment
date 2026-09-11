@@ -25,6 +25,21 @@ Therefore, "good" for this agent is defined by:
 - **Direct Autonomous Account Modification**: The bot does not execute database writes (e.g. triggering refunds directly via API without authorization). Public tweets lack authenticated customer identity; performing automated write actions on unverified handles introduces major fraud vectors.
 - **Unbounded Multi-Turn Free Chat**: Twitter is a public broadcast channel. Extended back-and-forth public threads increase customer frustration and brand risk. The agent strictly limits public engagement to 1 turn of guidance before routing to secure DM or official help portals.
 
+### 1.4 The Routing Decision Architecture: Auto-Handle vs. Escalate-to-Human
+To satisfy Requirement 3 (*"Decide whether the message should be auto-handled or escalated to a human — with a stated reason"*), our system implements a **multi-signal asymmetric risk-control engine** (`src/escalation/engine.py`):
+1. **The Core Philosophy (High Recall on Risk)**: Failing to escalate a critical issue (e.g., account takeover, physical fire hazard) has catastrophic brand, legal, and compliance consequences. Conversely, over-escalating a simple query merely consumes minor agent review time. Thus, the engine enforces a **>95% recall safety standard**.
+2. **6 Multi-Signal Orthogonal Triggers**:
+   - *Signal 1: Security Intent Gate* (`ACCOUNT_ACCESS_SECURITY` $\rightarrow$ +0.85 risk) — Mandatory escalation for password lockouts, 2FA, or stolen credentials.
+   - *Signal 2: Physical Hazard & Legal Gate* (`fire`, `smoke`, `exploded`, `lawyer`, `police` $\rightarrow$ +0.90 risk) — Immediate route to Executive Escalations.
+   - *Signal 3: Chronic / Repeated Friction* (`3rd time`, `already called`, `still waiting` $\rightarrow$ +0.75 risk) — Churn avoidance when previous automated paths failed.
+   - *Signal 4: PII & Account Lookup Gate* (`check my account`, `look into my order` $\rightarrow$ +0.70 risk) — Public social media cannot expose private records.
+   - *Signal 5: Severe Frustration & Hostility* (`scam`, `theft`, `furious`, `disgusted` $\rightarrow$ +0.60 risk) — De-escalates angry customers to empathetic human specialists.
+   - *Signal 6: Model Uncertainty Gate* ($\text{confidence} < 0.70 \rightarrow +0.50$ risk) — Safe fallback on ambiguous or out-of-distribution queries.
+3. **Dual Routing Actions & Mandatory Stated Reason**:
+   - `AUTO_HANDLE` ($\text{risk} < 0.65$): Dispatches an authentic `@AmazonHelp` SOP self-service reply with official verified links within $\le 280$ characters. Stated reason: *"Standard query eligible for automated self-service resolution under brand SOP."*
+   - `ESCALATE_TO_HUMAN` ($\text{risk} \ge 0.65$): Dispatches a safe de-escalation holding reply while passing an internal triage payload to human supervisors with an explicit diagnostic `stated_reason`.
+4. **Hiver Platform Integration**: In Hiver, this payload automatically tags conversations (e.g. `#Security-Urgent`), assigns them to specialized queues, attaches the `stated_reason` as a private internal note, and loads a pre-drafted reply for 1-click agent approval.
+
 ---
 
 ## 2. Experimental Results vs. Baselines

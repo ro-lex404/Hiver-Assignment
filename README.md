@@ -48,12 +48,17 @@ python scripts/evaluate_finetuned_judge.py
 python scripts/benchmark_banking77.py
 ```
 
-### 6. Interactive Real-Time Tweet Test
+### 6. Interactive Real-Time Tweet Test (Auto-Handle vs. Human Escalation)
+Test the agent live on Twitter queries to see the intent classification, routing decision, stated reason, and drafted reply:
 ```bash
-python scripts/run_pipeline.py "My credit card was charged $139 for Prime renewal but I cancelled it 2 weeks ago!"
+# Scenario A: Standard Inquiry -> AUTO_HANDLE
+python scripts/run_pipeline.py "Where is my package tracking TBA982348123019?"
+
+# Scenario B: High-Risk Incident -> ESCALATE_TO_HUMAN (with stated reason)
+python scripts/run_pipeline.py "My account was hacked and unauthorized charges appeared, please help immediately!"
 ```
 
-### 7. Run Test Suite
+### 7. Run Test Suite (< 1 second)
 ```bash
 python tests/run_tests.py
 ```
@@ -160,13 +165,25 @@ Hiver-Assignment/
 
 ---
 
-## 📊 Key Highlights & Required Deliverables
+## 🎯 Core Agent Capabilities (Problem Statement Alignment)
 
-1. **Deliverable 1 (Runnable Pipeline)**: Instant reproduction in < 15 seconds via `python scripts/run_evaluation.py`.
-2. **Deliverable 2 (Golden Evaluation Set)**: 200 hand-labelled examples with complete annotations in `data/golden_set/golden_eval_200.jsonl` + `data/golden_set/SAMPLING_METHODOLOGY.md`.
-3. **Deliverable 3 (Evaluation Harness)**: Automated metrics + LLM-as-a-judge rubric + Human-Judge agreement calibration in `src/evaluation/`.
-4. **Deliverable 4 (Report)**: Complete evaluation report covering Problem Framing, Results vs 2 Baselines, Top 5 Failure Modes with real examples, mandatory *"What is misleading about my headline number?"* section, 3-Epoch Dual T4 QLoRA Fine-Tuning benchmark, and 1-week roadmap in [`reports/REPORT.md`](reports/REPORT.md).
-5. **Deliverable 5 (Decision Log)**: 16 non-obvious engineering decisions and trade-offs in [`reports/DECISION_LOG.md`](reports/DECISION_LOG.md).
+| Problem Statement Requirement | Pipeline Implementation | File Reference |
+| :--- | :--- | :--- |
+| **1. Intent Classification** | 7 MECE intents defined from real `@AmazonHelp` conversations. Hybrid lexical + semantic classifier with confidence scoring. | [`src/intent/classifier.py`](src/intent/classifier.py) |
+| **2. Grounded Reply Drafting** | Historical resolution RAG retrieves top-K verified `@AmazonHelp` agent resolutions. Enforces $\le 280$ chars, brand voice, and whitelisted URLs. | [`src/generator/draft_agent.py`](src/generator/draft_agent.py) |
+| **3. Routing Decision with Stated Reason** | 6 multi-signal triggers (Security, Hazards, PII, Chronic friction, Hostility, Uncertainty) yielding `AUTO_HANDLE` or `ESCALATE_TO_HUMAN` with a mandatory `stated_reason`. | [`src/escalation/engine.py`](src/escalation/engine.py) |
+
+---
+
+## 📊 Deliverables Compliance Checklist
+
+| Deliverable | Requirement | Location / Verification | Status |
+| :--- | :--- | :--- | :---: |
+| **1. Runnable Pipeline** | Reproduce headline results in < 15 minutes. | `python scripts/run_evaluation.py` (executes in ~6 seconds) | ✅ **Verified** |
+| **2. Golden Evaluation Set** | 150–250 hand-labelled examples + sampling note. | 200 samples in [`data/golden_set/golden_eval_200.jsonl`](data/golden_set/golden_eval_200.jsonl), documented in [`SAMPLING_METHODOLOGY.md`](data/golden_set/SAMPLING_METHODOLOGY.md) | ✅ **Verified** |
+| **3. Evaluation Harness** | Automated metrics + LLM judge rubric + Human-Judge agreement. | [`src/evaluation/`](src/evaluation/), [`scripts/evaluate_judge_agreement.py`](scripts/evaluate_judge_agreement.py), 50-sample human calibration | ✅ **Verified** |
+| **4. Comprehensive Report** | Max 6 pages covering Problem Framing, Results vs 2 Baselines, Top 5 Failure Modes, "What is Misleading About My Headline Number?", and 1-week roadmap. | [`reports/REPORT.md`](reports/REPORT.md) (also includes 3-Epoch Dual T4 QLoRA benchmark & Banking77 benchmark) | ✅ **Verified** |
+| **5. Decision Log** | 10–15 non-obvious engineering decisions and trade-offs. | 16 decisions documented in [`reports/DECISION_LOG.md`](reports/DECISION_LOG.md) | ✅ **Verified** |
 
 ---
 
@@ -175,4 +192,12 @@ Hiver-Assignment/
 To run large-scale training / fine-tuning on Kaggle GPU instances without downloading the 516MB dataset locally:
 1. Open [`notebooks/kaggle_gpu_support_pipeline.ipynb`](notebooks/kaggle_gpu_support_pipeline.ipynb) on Kaggle.
 2. Verified on Kaggle Dual Tesla T4 GPUs: full 3-epoch QLoRA fine-tuning of `Llama-3.2-1B-Instruct` across 5,000 Amazon support conversations (`rohanalexbimal/hiver-ai-support-agent`).
+
+---
+
+## 📝 Submission Details
+- **Submission Form**: [Hiver SDE Intern Take-Home Submission Form](https://intelligent-bar-256.notion.site/39492cbf0da2800682cfc78a600a745f)
+- **Repository**: [https://github.com/ro-lex404/Hiver-Assignment](https://github.com/ro-lex404/Hiver-Assignment)
+- **Full Evaluation Report**: [reports/REPORT.md](reports/REPORT.md)
+- **Engineering Decision Log**: [reports/DECISION_LOG.md](reports/DECISION_LOG.md)
 

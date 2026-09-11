@@ -14,7 +14,8 @@ class LLMJudgeRubric:
     4. Escalation Appropriateness (Hands off sensitive PII/hazards, auto-resolves standard cases)
     """
 
-    def __init__(self):
+    def __init__(self, use_api: bool = False):
+        self.use_api = use_api
         self.llm = LLMClient()
 
     def evaluate_reply(
@@ -28,8 +29,8 @@ class LLMJudgeRubric:
         reference_reply: str
     ) -> Dict[str, Any]:
         
-        # If active LLM API is configured, run structured JSON judge prompt
-        if self.llm.provider in ["groq", "openai", "gemini"]:
+        # If active LLM API is explicitly requested, run structured JSON judge prompt
+        if self.use_api and self.llm.provider in ["groq", "openai", "gemini"]:
             system_prompt = (
                 "You are an expert customer support quality auditor evaluating an AI response on Twitter. "
                 "Rate the predicted reply across 4 dimensions on a 1-5 scale:\n"

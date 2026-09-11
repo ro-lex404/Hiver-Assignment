@@ -73,10 +73,14 @@ class LLMClient:
 
         self.temperature = temperature
         self.max_tokens = max_tokens
+        self._rate_limited_until = 0.0
         logger.info(f"Initialized LLMClient (Provider: {self.provider}, Model: {self.model})")
 
     def generate(self, system_prompt: str, user_prompt: str) -> str:
         """Generate text completion from the active LLM provider."""
+        if time.time() < self._rate_limited_until:
+            return self._local_fallback(system_prompt, user_prompt)
+
         if self.provider == "groq" and self.groq_api_key:
             return self._call_groq(system_prompt, user_prompt)
         elif self.provider == "openai" and self.openai_api_key:
@@ -109,9 +113,10 @@ class LLMClient:
                     data = json.loads(resp.read().decode("utf-8"))
                     return data["choices"][0]["message"]["content"].strip()
             except urllib.error.HTTPError as e:
-                if e.code == 429 and attempt == 0:
-                    time.sleep(1.5)
-                    continue
+                if e.code == 429:
+                    self._rate_limited_until = time.time() + 30.0
+                    logger.warning(f"Groq API returned HTTP 429 rate limit. Setting 30s cooldown and falling back to local semantic engine.")
+                    return self._local_fallback(system_prompt, user_prompt)
                 logger.warning(f"Groq API call failed: {e}. Falling back to local semantic engine.")
                 return self._local_fallback(system_prompt, user_prompt)
             except Exception as e:
