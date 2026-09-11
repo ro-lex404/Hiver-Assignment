@@ -55,7 +55,7 @@ We evaluated three pipeline architectures across the 200-sample Golden Evaluatio
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Trivial Baseline** | 24.0% | 0.055 | 0.621 | 100.0% | 2.48 / 5.0 | 3.52 / 5.0 | **1.5 ms** |
 | **Simple Baseline** | 67.0% | 0.631 | 0.547 | 42.2% | 4.34 / 5.0 | 4.37 / 5.0 | **1.5 ms** |
-| **Proposed Support Agent** | **76.5%** | **0.769** | **0.571** | **42.2%** | **4.33 / 5.0** | **4.43 / 5.0** | **1.9 ms** |
+| **Proposed Support Agent** | **76.5%** | **0.769** | **0.571** | **42.2%** | **4.32 / 5.0** | **4.43 / 5.0** | **1.9 ms** |
 
 ### 2.2 Key Findings
 - The Proposed Support Agent achieved a **+14.2% absolute gain in Intent Macro-F1** over the Simple Baseline (0.769 vs 0.631) and **+71.4% gain over the Trivial Baseline**.

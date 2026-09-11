@@ -17,12 +17,12 @@ class SupportAgentPipeline:
     5. Policy-Grounded Draft Reply Generation
     """
 
-    def __init__(self, top_k_retrieval: int = 3, escalation_threshold: float = 0.70):
+    def __init__(self, top_k_retrieval: int = 3, escalation_threshold: float = 0.70, use_llm_api: bool = True):
         self.classifier = IntentClassifier()
         self.retriever = HistoricalResolutionRetriever()
         self.context_builder = ContextBuilder()
         self.escalation_engine = EscalationEngine(confidence_threshold=escalation_threshold)
-        self.generator = GroundedDraftAgent()
+        self.generator = GroundedDraftAgent(use_api=use_llm_api)
         self.top_k = top_k_retrieval
         logger.info("Initialized SupportAgentPipeline.")
 

@@ -23,13 +23,13 @@ def run_benchmark():
     dataset = load_golden_set()
     logger.info(f"Loaded {len(dataset)} evaluation records from golden set.")
 
+    use_api = "--use-api" in sys.argv
     models = {
         "Trivial Baseline": TrivialBaselineAgent(),
         "Simple Baseline": SimpleBaselineAgent(),
-        "Proposed Support Agent": SupportAgentPipeline()
+        "Proposed Support Agent": SupportAgentPipeline(use_llm_api=use_api)
     }
 
-    use_api = "--use-api" in sys.argv
     judge = LLMJudgeRubric(use_api=use_api)
     summary_results = []
     detailed_metrics = {}

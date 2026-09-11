@@ -23,7 +23,8 @@ class GroundedDraftAgent:
         "FEEDBACK_AND_GENERAL": "amazon.com/help"
     }
 
-    def __init__(self):
+    def __init__(self, use_api: bool = True):
+        self.use_api = use_api
         self.llm = LLMClient()
 
     def generate_reply(
@@ -36,8 +37,8 @@ class GroundedDraftAgent:
         should_escalate = escalation_result["should_escalate"]
         link = self.BRAND_LINKS.get(intent, "amazon.com/help")
 
-        # If LLM client has an active cloud API (Groq, OpenAI, Gemini), run grounded prompt
-        if self.llm.provider in ["groq", "openai", "gemini"]:
+        # If LLM client has an active cloud API and use_api is True, run grounded prompt
+        if self.use_api and self.llm.provider in ["groq", "openai", "gemini"]:
             system_prompt = (
                 "You are the official Twitter customer service AI agent for @AmazonHelp. "
                 "Your job is to draft a polite, empathetic, concise tweet reply (<280 chars) to the customer. "
