@@ -22,6 +22,38 @@ def set_cell_margins(cell, top=100, bottom=100, left=150, right=150):
         tcMar.append(node)
     tcPr.append(tcMar)
 
+def clean_latex(text: str) -> str:
+    text = text.replace(r"$\rightarrow$", "→")
+    text = text.replace(r"$ightarrow$", "→")
+    text = text.replace(r"ightarrow", "→")
+    text = text.replace(r"\rightarrow", "→")
+    text = text.replace(r"$\le$", "≤")
+    text = text.replace(r"\le", "≤")
+    text = text.replace(r"$\ge$", "≥")
+    text = text.replace(r"\ge", "≥")
+    text = text.replace(r"$\times$", "×")
+    text = text.replace(r"\times", "×")
+    text = text.replace(r"$\alpha=32$", "α=32")
+    text = text.replace(r"$\alpha$", "α")
+    text = text.replace(r"\alpha", "α")
+    text = text.replace(r"$\kappa$", "κ")
+    text = text.replace(r"\kappa", "κ")
+    text = text.replace(r"$\approx$", "≈")
+    text = text.replace(r"\approx", "≈")
+    text = text.replace(r"$\text{risk} < 0.65$", "(risk < 0.65)")
+    text = text.replace(r"$\text{risk} \ge 0.65$", "(risk ≥ 0.65)")
+    text = text.replace(r"$\text{risk}$", "risk")
+    text = text.replace(r"\text{risk}", "risk")
+    text = text.replace(r"$\text{confidence} < 0.70 \rightarrow +0.50$", "(confidence < 0.70 → +0.50)")
+    text = text.replace(r"\text{confidence}", "confidence")
+    text = text.replace(r"$r=16$", "r=16")
+    text = text.replace(r"$2\times 10^{-4}$", "2 × 10⁻⁴")
+    text = text.replace(r"$0.50 \le \text{confidence} < 0.70$", "(0.50 ≤ confidence < 0.70)")
+    text = text.replace(r"$\le 280$", "≤ 280")
+    text = text.replace(r"\le 280", "≤ 280")
+    text = re.sub(r"\$([^\$]+)\$", r"\1", text)
+    return text
+
 def add_styled_paragraph(doc, text, style='Normal', space_after=6, space_before=0, align=WD_ALIGN_PARAGRAPH.LEFT):
     p = doc.add_paragraph(style=style)
     p.alignment = align
@@ -32,6 +64,7 @@ def add_styled_paragraph(doc, text, style='Normal', space_after=6, space_before=
     return p
 
 def _apply_inline_formatting(paragraph, text):
+    text = clean_latex(text)
     pattern = re.compile(r'(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`|https?://[^\s)]+)')
     tokens = pattern.split(text)
     for token in tokens:
@@ -201,7 +234,7 @@ def convert_md_to_docx(md_path: str, docx_path: str):
             p = doc.add_paragraph()
             p.paragraph_format.space_before = Pt(14)
             p.paragraph_format.space_after = Pt(6)
-            run = p.add_run(stripped[2:].strip())
+            run = p.add_run(clean_latex(stripped[2:].strip()))
             run.font.name = 'Calibri Light'
             run.font.size = Pt(22)
             run.bold = True
@@ -212,7 +245,7 @@ def convert_md_to_docx(md_path: str, docx_path: str):
             p = doc.add_paragraph()
             p.paragraph_format.space_before = Pt(12)
             p.paragraph_format.space_after = Pt(4)
-            run = p.add_run(stripped[3:].strip())
+            run = p.add_run(clean_latex(stripped[3:].strip()))
             run.font.name = 'Calibri Light'
             run.font.size = Pt(15)
             run.bold = True
@@ -223,7 +256,7 @@ def convert_md_to_docx(md_path: str, docx_path: str):
             p = doc.add_paragraph()
             p.paragraph_format.space_before = Pt(8)
             p.paragraph_format.space_after = Pt(3)
-            run = p.add_run(stripped[4:].strip())
+            run = p.add_run(clean_latex(stripped[4:].strip()))
             run.font.name = 'Calibri'
             run.font.size = Pt(12)
             run.bold = True
@@ -234,7 +267,7 @@ def convert_md_to_docx(md_path: str, docx_path: str):
             p = doc.add_paragraph()
             p.paragraph_format.space_before = Pt(6)
             p.paragraph_format.space_after = Pt(2)
-            run = p.add_run(stripped[5:].strip())
+            run = p.add_run(clean_latex(stripped[5:].strip()))
             run.font.name = 'Calibri'
             run.font.size = Pt(11)
             run.bold = True

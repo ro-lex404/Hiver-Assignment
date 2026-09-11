@@ -18,7 +18,7 @@ In customer support, **the cost of a false positive in self-service (hallucinati
 Therefore, "good" for this agent is defined by:
 1. **Zero Hallucination of Policies or Private Data**: Never invent refund promises or ask for passwords/OTPs publicly.
 2. **High Escalation Recall (>95% safety target)**: Ensuring every high-risk query (fraud, severe hazard, legal threat, repeated failure) is escalated to a human with an explicit stated reason.
-3. **Strict Compliance with Twitter Constraints**: Output length must be $\le 280$ characters, empathetic, succinct, and provide verified self-service URL destinations.
+3. **Strict Compliance with Twitter Constraints**: Output length must be ≤ 280 characters, empathetic, succinct, and provide verified self-service URL destinations.
 4. **Deterministic Auditing**: Every routing and escalation decision must produce a human-interpretable rationale.
 
 ### 1.3 What We Chose NOT to Build (And Why)
@@ -29,15 +29,15 @@ Therefore, "good" for this agent is defined by:
 To satisfy Requirement 3 (*"Decide whether the message should be auto-handled or escalated to a human — with a stated reason"*), our system implements a **multi-signal asymmetric risk-control engine** (`src/escalation/engine.py`):
 1. **The Core Philosophy (High Recall on Risk)**: Failing to escalate a critical issue (e.g., account takeover, physical fire hazard) has catastrophic brand, legal, and compliance consequences. Conversely, over-escalating a simple query merely consumes minor agent review time. Thus, the engine enforces a **>95% recall safety standard**.
 2. **6 Multi-Signal Orthogonal Triggers**:
-   - *Signal 1: Security Intent Gate* (`ACCOUNT_ACCESS_SECURITY` $\rightarrow$ +0.85 risk) — Mandatory escalation for password lockouts, 2FA, or stolen credentials.
-   - *Signal 2: Physical Hazard & Legal Gate* (`fire`, `smoke`, `exploded`, `lawyer`, `police` $\rightarrow$ +0.90 risk) — Immediate route to Executive Escalations.
-   - *Signal 3: Chronic / Repeated Friction* (`3rd time`, `already called`, `still waiting` $\rightarrow$ +0.75 risk) — Churn avoidance when previous automated paths failed.
-   - *Signal 4: PII & Account Lookup Gate* (`check my account`, `look into my order` $\rightarrow$ +0.70 risk) — Public social media cannot expose private records.
-   - *Signal 5: Severe Frustration & Hostility* (`scam`, `theft`, `furious`, `disgusted` $\rightarrow$ +0.60 risk) — De-escalates angry customers to empathetic human specialists.
-   - *Signal 6: Model Uncertainty Gate* ($\text{confidence} < 0.70 \rightarrow +0.50$ risk) — Safe fallback on ambiguous or out-of-distribution queries.
+   - *Signal 1: Security Intent Gate* (`ACCOUNT_ACCESS_SECURITY` → +0.85 risk) — Mandatory escalation for password lockouts, 2FA, or stolen credentials.
+   - *Signal 2: Physical Hazard & Legal Gate* (`fire`, `smoke`, `exploded`, `lawyer`, `police` → +0.90 risk) — Immediate route to Executive Escalations.
+   - *Signal 3: Chronic / Repeated Friction* (`3rd time`, `already called`, `still waiting` → +0.75 risk) — Churn avoidance when previous automated paths failed.
+   - *Signal 4: PII & Account Lookup Gate* (`check my account`, `look into my order` → +0.70 risk) — Public social media cannot expose private records.
+   - *Signal 5: Severe Frustration & Hostility* (`scam`, `theft`, `furious`, `disgusted` → +0.60 risk) — De-escalates angry customers to empathetic human specialists.
+   - *Signal 6: Model Uncertainty Gate* (confidence < 0.70 → +0.50 risk) — Safe fallback on ambiguous or out-of-distribution queries.
 3. **Dual Routing Actions & Mandatory Stated Reason**:
-   - `AUTO_HANDLE` ($\text{risk} < 0.65$): Dispatches an authentic `@AmazonHelp` SOP self-service reply with official verified links within $\le 280$ characters. Stated reason: *"Standard query eligible for automated self-service resolution under brand SOP."*
-   - `ESCALATE_TO_HUMAN` ($\text{risk} \ge 0.65$): Dispatches a safe de-escalation holding reply while passing an internal triage payload to human supervisors with an explicit diagnostic `stated_reason`.
+   - `AUTO_HANDLE` (risk < 0.65): Dispatches an authentic `@AmazonHelp` SOP self-service reply with official verified links within ≤ 280 characters. Stated reason: *"Standard query eligible for automated self-service resolution under brand SOP."*
+   - `ESCALATE_TO_HUMAN` (risk ≥ 0.65): Dispatches a safe de-escalation holding reply while passing an internal triage payload to human supervisors with an explicit diagnostic `stated_reason`.
 4. **Hiver Platform Integration**: In Hiver, this payload automatically tags conversations (e.g. `#Security-Urgent`), assigns them to specialized queues, attaches the `stated_reason` as a private internal note, and loads a pre-drafted reply for 1-click agent approval.
 
 ---
@@ -83,7 +83,7 @@ Rigorous error analysis on misclassified or misrouted instances revealed five di
 ### Failure Mode 1: Multi-Intent Compound Queries (36% of errors)
 - **Real Example**: *"Ordered a Kindle Paperwhite that arrived with a cracked screen, but your return label won't print. Need a refund now."*
 - **Observed Behavior**: Classifier predicted `DAMAGED_DEFECTIVE_ITEM`, while the golden label prioritized `REFUND_AND_RETURNS` due to the immediate label blocking issue.
-- **Hypothesis & Root Cause**: Single-label classification architectures struggle when a customer experiences a sequence of failures (hardware defect $ightarrow$ label failure $ightarrow$ refund request).
+- **Hypothesis & Root Cause**: Single-label classification architectures struggle when a customer experiences a sequence of failures (hardware defect → label failure → refund request).
 - **Proposed Fix**: Implement hierarchical multi-label tagging where secondary intents trigger composite resolution templates.
 
 ### Failure Mode 2: Implicit Account Verification Triggers (24% of errors)
@@ -140,13 +140,13 @@ To evaluate whether an on-device Small Language Model (SLM) can eliminate extern
 | :--- | :--- | :--- |
 | **Base Model** | `unsloth/Llama-3.2-1B-Instruct` | Compact 1.25B parameter causal LM; low latency on edge or single GPU |
 | **Quantization** | 4-bit NF4 (`bitsandbytes`) with double quant | Reduces base weight VRAM footprint from ~5 GB to ~1.3 GB per GPU |
-| **Adapter Architecture** | LoRA (Rank $r=16$, $\alpha=32$, Dropout $0.05$) | Injects low-rank decomposition across all 7 linear projections (`q, k, v, o, gate, up, down`) |
+| **Adapter Architecture** | LoRA (Rank r=16, α=32, Dropout 0.05) | Injects low-rank decomposition across all 7 linear projections (`q, k, v, o, gate, up, down`) |
 | **Trainable Parameters** | **11,272,192** (0.9039% of 1.25B total) | Prevents catastrophic forgetting while adapting brand tone & brevity |
 | **Training Dataset** | 5,000 multi-turn ChatML conversations | Cleaned, deduplicated `@AmazonHelp` customer support interactions (`rohanalexbimal/amazon-support-chatml-5k`) |
 | **Hardware Environment** | Dual Nvidia Tesla T4 GPUs (2 × 14.56 GB VRAM) | Compute capability `sm_75`, FP16 mixed precision |
 | **Batch & Accumulation** | Per-device batch 4 × Grad Accum 2 = Effective Batch 8 | Maximizes GPU tensor core saturation without OOM |
-| **Optimization** | 3 Full Epochs (1,875 optimization steps), Cosine LR Decay ($2\times 10^{-4}$) | Total training time: **2,643.4s (~44.06 minutes)** |
-| **Loss Convergence** | Initial loss >10.0 $\rightarrow$ **Final Training Loss: 7.0386** | Smooth convergence across 5,000 conversational training records |
+| **Optimization** | 3 Full Epochs (1,875 optimization steps), Cosine LR Decay (2 × 10⁻⁴) | Total training time: **2,643.4s (~44.06 minutes)** |
+| **Loss Convergence** | Initial loss >10.0 → **Final Training Loss: 7.0386** | Smooth convergence across 5,000 conversational training records |
 
 ---
 
@@ -156,10 +156,10 @@ We evaluated identical customer queries against both the zero-shot Base Model (`
 
 | Customer Query | Base Model (Pre-Fine-Tuning) | 3-Epoch LoRA Adapter (Post-Fine-Tuning) | Base Chars | LoRA Chars | 280 Limit | Safety / Brand Assessment |
 | :--- | :--- | :--- | :---: | :---: | :---: | :--- |
-| **Delayed Delivery**:<br>*"Where is my package tracking TBA982348123019? Was supposed to arrive yesterday!"* | *"Hi there, I'm sorry to hear that your package hasn't arrived yet. I'm working on it. I've checked on the status, and it's possible there was a delay. You can track it again here: [link to tracking page]. Can you please check the status and let me know if you have any further issues?"* | *"@121399 Hi, sorry to hear it hasn't arrived. What does the latest tracking information say? You can find that here: https://t.co/aaDyEz1VgE ^MI"* | 284 | **143** | **PASS** ($\le 280$) | Base exceeded Twitter limit (284 chars) and included placeholder tokens. LoRA strictly adheres to 143 chars with authentic agent tag `^MI`. |
-| **Prime Billing Dispute**:<br>*"My credit card was charged $139 for Prime renewal but I cancelled 2 weeks ago!"* | *"I'm happy to help you with your concern. I'm going to go ahead and cancel your Prime membership for you. Your refund will be processed within 3-5 business days. If you have any further issues, please let me know."* | *"@127184 I'm sorry for the charge! Have you received an e-mail from us explaining the charge? ^AL"* | 212 | **96** | **PASS** ($\le 280$) | **CRITICAL FAILURE IN BASE MODEL**: Base model hallucinated account access and promised an unauthorized financial refund on public Twitter! LoRA appropriately refuses false claims and initiates empathetic diagnostic discovery. |
-| **Hardware Troubleshooting**:<br>*"My Fire TV stick remote is frozen and wont pair with my TV."* | *"Sorry to hear that your Fire TV stick is frozen on your TV. Try restarting your TV and remote, then try pairing again. If issues persist, reset your Fire TV stick to its default settings and try pairing once more. If not, contact Amazon support for further assistance."* | *"@116618 I'm sorry for the trouble! Have you tried restarting your TV and remote? ^AL"* | 270 | **84** | **PASS** ($\le 280$) | Base response is verbose and repetitive (270 chars). LoRA gives succinct, actionable first-step guidance (84 chars). |
-| **Whole Foods Returns**:<br>*"How do I return an unopened coffee maker at Whole Foods?"* | *"Hi there, you can return your unopened coffee maker at any Whole Foods store. Just make sure to bring your receipt or order details with you. Let me know if you have any questions!"* | *"@132732 Hi, you can contact us here: https://t.co/JzP7hlA23B. ^TS"* | 196 | **65** | **PASS** ($\le 280$) | LoRA generates an authentic concise support macro (65 chars). |
+| **Delayed Delivery**:<br>*"Where is my package tracking TBA982348123019? Was supposed to arrive yesterday!"* | *"Hi there, I'm sorry to hear that your package hasn't arrived yet. I'm working on it. I've checked on the status, and it's possible there was a delay. You can track it again here: [link to tracking page]. Can you please check the status and let me know if you have any further issues?"* | *"@121399 Hi, sorry to hear it hasn't arrived. What does the latest tracking information say? You can find that here: https://t.co/aaDyEz1VgE ^MI"* | 284 | **143** | **PASS** (≤ 280) | Base exceeded Twitter limit (284 chars) and included placeholder tokens. LoRA strictly adheres to 143 chars with authentic agent tag `^MI`. |
+| **Prime Billing Dispute**:<br>*"My credit card was charged 139 for Prime renewal but I cancelled 2 weeks ago!"* | *"I'm happy to help you with your concern. I'm going to go ahead and cancel your Prime membership for you. Your refund will be processed within 3-5 business days. If you have any further issues, please let me know."* | *"@127184 I'm sorry for the charge! Have you received an e-mail from us explaining the charge? ^AL"* | 212 | **96** | **PASS** (≤ 280) | **CRITICAL FAILURE IN BASE MODEL**: Base model hallucinated account access and promised an unauthorized financial refund on public Twitter! LoRA appropriately refuses false claims and initiates empathetic diagnostic discovery. |
+| **Hardware Troubleshooting**:<br>*"My Fire TV stick remote is frozen and wont pair with my TV."* | *"Sorry to hear that your Fire TV stick is frozen on your TV. Try restarting your TV and remote, then try pairing again. If issues persist, reset your Fire TV stick to its default settings and try pairing once more. If not, contact Amazon support for further assistance."* | *"@116618 I'm sorry for the trouble! Have you tried restarting your TV and remote? ^AL"* | 270 | **84** | **PASS** (≤ 280) | Base response is verbose and repetitive (270 chars). LoRA gives succinct, actionable first-step guidance (84 chars). |
+| **Whole Foods Returns**:<br>*"How do I return an unopened coffee maker at Whole Foods?"* | *"Hi there, you can return your unopened coffee maker at any Whole Foods store. Just make sure to bring your receipt or order details with you. Let me know if you have any questions!"* | *"@132732 Hi, you can contact us here: https://t.co/JzP7hlA23B. ^TS"* | 196 | **65** | **PASS** (≤ 280) | LoRA generates an authentic concise support macro (65 chars). |
 
 ---
 
@@ -252,7 +252,7 @@ We evaluated two distinct tasks using [`scripts/benchmark_banking77.py`](../scri
 3. **Dynamic URL Slot Filling**:
    - Strip model-generated shortened URLs via post-processing and deterministically inject verified, live HTTPS destination links retrieved from the vector knowledge store.
 4. **Active Learning Human-in-the-Loop Shared Inbox**:
-   - Integrate with Hiver's shared inbox platform to route borderline-confidence predictions ($0.50 \le \text{confidence} < 0.70$) to human customer service agents, streaming their edits back into a continuous retraining dataset.
+   - Integrate with Hiver's shared inbox platform to route borderline-confidence predictions (0.50 ≤ confidence < 0.70) to human customer service agents, streaming their edits back into a continuous retraining dataset.
 
 ---
 
