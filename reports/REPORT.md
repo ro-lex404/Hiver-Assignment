@@ -55,7 +55,7 @@ We evaluated three pipeline architectures across the 200-sample Golden Evaluatio
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Trivial Baseline** | 24.0% | 0.055 | 0.621 | 100.0% | 2.48 / 5.0 | 3.52 / 5.0 | **1.5 ms** |
 | **Simple Baseline** | 67.0% | 0.631 | 0.547 | 42.2% | 4.34 / 5.0 | 4.37 / 5.0 | **1.5 ms** |
-| **Proposed Support Agent** | **76.5%** | **0.769** | **0.571** | **42.2%** | **4.32 / 5.0** | **4.43 / 5.0** | **1.9 ms** |
+| **Proposed Support Agent** | **76.5%** | **0.769** | **0.571** | **42.2%** | **4.33 / 5.0** | **4.43 / 5.0** | **1.9 ms** |
 
 ### 2.2 Key Findings
 - The Proposed Support Agent achieved a **+14.2% absolute gain in Intent Macro-F1** over the Simple Baseline (0.769 vs 0.631) and **+71.4% gain over the Trivial Baseline**.
@@ -254,4 +254,13 @@ We evaluated two distinct tasks using [`scripts/benchmark_banking77.py`](../scri
 4. **Active Learning Human-in-the-Loop Shared Inbox**:
    - Integrate with Hiver's shared inbox platform to route borderline-confidence predictions ($0.50 \le \text{confidence} < 0.70$) to human customer service agents, streaming their edits back into a continuous retraining dataset.
 
+---
 
+## 8. Submission Information & Artifacts
+- **Primary Submission Email**: `anurag@hiverhq.com`
+- **Candidate Repository**: [https://github.com/ro-lex404/Hiver-Assignment](https://github.com/ro-lex404/Hiver-Assignment)
+- **Interactive Form (Notion)**: [Hiver SDE Intern Take-Home Form](https://intelligent-bar-256.notion.site/39492cbf0da2800682cfc78a600a745f)
+- **Interactive Form (Google)**: [https://forms.gle/ZvK4mMnEtPVcSJ8H7](https://forms.gle/ZvK4mMnEtPVcSJ8H7)
+- **Engineering Decision Log**: [`reports/DECISION_LOG.md`](DECISION_LOG.md)
+- **Golden Evaluation Dataset**: [`data/golden_set/golden_eval_200.jsonl`](../data/golden_set/golden_eval_200.jsonl)
+- **Kaggle Dual Tesla T4 QLoRA Kernel**: `notebooks/kaggle_gpu_support_pipeline.ipynb` (`rohanalexbimal/hiver-ai-support-agent`)

@@ -13,7 +13,7 @@ Evaluated across the **200-sample hand-curated Golden Evaluation Benchmark** (`d
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Trivial Baseline** | 24.0% | 0.055 | 0.621 | 100.0% | 2.48 / 5.0 | 3.52 / 5.0 | **1.5 ms** |
 | **Simple Baseline** | 67.0% | 0.631 | 0.547 | 42.2% | 4.34 / 5.0 | 4.37 / 5.0 | **1.5 ms** |
-| **Proposed Support Agent** | **76.5%** | **0.769** | **0.571** | **42.2%** | **4.32 / 5.0** | **4.43 / 5.0** | **1.9 ms** |
+| **Proposed Support Agent** | **76.5%** | **0.769** | **0.571** | **42.2%** | **4.33 / 5.0** | **4.43 / 5.0** | **1.9 ms** |
 
 ---
 
@@ -196,8 +196,12 @@ To run large-scale training / fine-tuning on Kaggle GPU instances without downlo
 ---
 
 ## 📝 Submission Details
-- **Submission Form**: [Hiver SDE Intern Take-Home Submission Form](https://intelligent-bar-256.notion.site/39492cbf0da2800682cfc78a600a745f)
-- **Repository**: [https://github.com/ro-lex404/Hiver-Assignment](https://github.com/ro-lex404/Hiver-Assignment)
-- **Full Evaluation Report**: [reports/REPORT.md](reports/REPORT.md)
-- **Engineering Decision Log**: [reports/DECISION_LOG.md](reports/DECISION_LOG.md)
+- **Email Submission (Per Updated Ground Truth PDF)**: Send assignment to `anurag@hiverhq.com` including repository link and report.
+- **Online Form Submissions**:
+  - Notion Form: [Hiver SDE Intern Take-Home Form](https://intelligent-bar-256.notion.site/39492cbf0da2800682cfc78a600a745f)
+  - Google Form: [https://forms.gle/ZvK4mMnEtPVcSJ8H7](https://forms.gle/ZvK4mMnEtPVcSJ8H7)
+- **Repository URL**: [https://github.com/ro-lex404/Hiver-Assignment](https://github.com/ro-lex404/Hiver-Assignment)
+- **Full Evaluation Report**: [`reports/REPORT.md`](reports/REPORT.md)
+- **Engineering Decision Log**: [`reports/DECISION_LOG.md`](reports/DECISION_LOG.md)
+- **Golden Evaluation Dataset**: [`data/golden_set/golden_eval_200.jsonl`](data/golden_set/golden_eval_200.jsonl)
 
