@@ -257,10 +257,10 @@ We evaluated two distinct tasks using [`scripts/benchmark_banking77.py`](../scri
 ---
 
 ## 8. Submission Information & Artifacts
-- **Primary Submission Email**: `anurag@hiverhq.com`
-- **Candidate Repository**: [https://github.com/ro-lex404/Hiver-Assignment](https://github.com/ro-lex404/Hiver-Assignment)
-- **Interactive Form (Notion)**: [Hiver SDE Intern Take-Home Form](https://intelligent-bar-256.notion.site/39492cbf0da2800682cfc78a600a745f)
-- **Interactive Form (Google)**: [https://forms.gle/ZvK4mMnEtPVcSJ8H7](https://forms.gle/ZvK4mMnEtPVcSJ8H7)
-- **Engineering Decision Log**: [`reports/DECISION_LOG.md`](DECISION_LOG.md)
-- **Golden Evaluation Dataset**: [`data/golden_set/golden_eval_200.jsonl`](../data/golden_set/golden_eval_200.jsonl)
-- **Kaggle Dual Tesla T4 QLoRA Kernel**: `notebooks/kaggle_gpu_support_pipeline.ipynb` (`rohanalexbimal/hiver-ai-support-agent`)
+- **Primary Submission Email**: anurag@hiverhq.com
+- **Online Submission Form (Notion)**: https://intelligent-bar-256.notion.site/39492cbf0da2800682cfc78a600a745f
+- **GitHub Repository**: https://github.com/ro-lex404/Hiver-Assignment
+- **Full Evaluation Report**: https://github.com/ro-lex404/Hiver-Assignment/blob/main/reports/REPORT.md
+- **Engineering Decision Log**: https://github.com/ro-lex404/Hiver-Assignment/blob/main/reports/DECISION_LOG.md
+- **Golden Evaluation Dataset**: https://github.com/ro-lex404/Hiver-Assignment/blob/main/data/golden_set/golden_eval_200.jsonl
+- **Kaggle Dual Tesla T4 QLoRA Kernel**: https://www.kaggle.com/code/rohanalexbimal/hiver-ai-support-agent
